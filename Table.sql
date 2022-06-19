@@ -44,11 +44,16 @@ create table OrderDetail
 	PersonId int,
 	OrderAddress varchar(30)
 
-	primary key (OrderId)
 	constraint FK_PersonOrderId foreign key (PersonId) --for naming convensation add FK_ at beginning
 	references Person(Id)
 )
 
+create table backup2022
+(
+	Id int not null,
+	FirstName varchar not null,
+	LastName varchar not null
+)
 --------alter table -------------------
 alter table Person 
 	add
@@ -71,6 +76,9 @@ add constraint PK_person primary key (Id,FirstName,Lastname)
 alter table OrderDetail
 add constraint FK_person foreign key (Id) references Person(Id)
 
+alter table OrderDetail
+add UserId int unique
+
 --delete constraints
 alter table PersonDetail
 drop constraint PK_Person
@@ -81,6 +89,7 @@ drop constraint FK_PersonOrderId
 --------delete table ------------------
 drop table Person
 drop table PersonDetail
+drop table OrderDetail
 
 ---Index statement----------
 --The CREATE INDEX statement is used to create indexes in tables.
@@ -89,4 +98,37 @@ drop table PersonDetail
 --Note: Updating a table with indexes takes more time than updating a table without (because the indexes also need an update). 
 --So, only create indexes on columns that will be frequently searched against.
 
+
+----Clustered vs Non-Clustered Indexes------------------
+--Clustered index requires less memory for operations.
+--A cluster index is a form of tables which consist of column and rows.
+--Cluster index exists on the physical level
+--A Clustered index is a type of index in which table records are physically reordered to match the index.
+--You can create only one clustered index in a table like primary key. Clustered index is as same as dictionary where the data is arranged by alphabetical order. 
+--There is a whole table in form of sorted data table can contain only one cluster index
+--When clustered need to create: The data or file, that you are moving into secondary memory should be in sequential or sorted order.
+							   --There should be a key value, meaning it can not have repeated values. 
+--Data retrieval  is faster than non-cluster index
+--Table is created with primary key constraints then database engine automatically create clustered index
+
+--example: creating a primary key
+
+--Non Cluster Index
+--Non-Clustered index requires more memory for operations.
+--A non cluster index is in the form of a report about the tables.
+--They are not created on the physical level but at the logical level, It does not sort the data at physical level
+--Data update is faster than clustered index
+--The data is stored in one place, and index is stored in another place. Since, the data and non-clustered index is stored separately,
+--then you can have multiple non-clustered index in a table. 
+--A non-clustered index collects the key at one place and records at another place. The index carries pointers to the position of that data. 
+--In non-clustered index, index contains the pointer to data. 
+--Table is created with UNIQUE constraints then database engine automatically create non-clustered index
+--Unique constraints are automatically non-clustered and without unique constraints we can create a non-clustered index
+
+--example:
+create nonclustered index NIX_OrderIdIndex on OrderDetail (OrderId asc)
+create nonclustered index NIX_Order on OrderDetail (OrderNumber desc)
+select * from sys.indexes
+exec sp_helpindex 'dbo.OrderDetail'
+exec sp_helpindex 'dbo.Person'
 
