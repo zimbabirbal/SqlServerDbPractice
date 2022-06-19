@@ -37,6 +37,12 @@ create table PersonDetail
     constraint PK_Person primary key (Id,LastName) --for naming convensation add PK_ at beginning
 )
 
+create table Orders
+(
+	Id int primary key,
+	PersonId int not null
+)
+
 create table OrderDetail
 (
 	OrderId int not null,
@@ -78,6 +84,13 @@ add constraint FK_person foreign key (Id) references Person(Id)
 
 alter table OrderDetail
 add UserId int unique
+
+
+alter table OrderDetail
+add UpdateDate datetime
+
+alter table PersonDetail
+add UpdateDate datetime
 
 --delete constraints
 alter table PersonDetail
